@@ -9,6 +9,7 @@
 **/a.out
 **/*.pyc
 **/*.pyo
+sc
 
 # Backups #
 ###########
