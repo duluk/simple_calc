@@ -1,0 +1,331 @@
+// This was fun to write but for now it handles only single digit
+// input and output. Will be fun to expand on this in the future.
+// Getting this right and somewhat realistic (useful) will be big step
+// toward understanding programming and C and structures/algorithms.
+
+// While this now accounts for multi-digit numbers, I still think
+// something more like this may be better:
+// 1. Call strtol on the input. This will convert all characters
+// to numbers up to the first invalid digit, which would be the operator.
+// 2. Store the operator. Move the pointer forward.
+// 3. Call strtol again.
+// 4. Calculate the result. (not doing precendence yet...that's tuff)
+// 5. Repeat this until newline is found.
+//
+// This will at least teach pointer manipulation, along with working
+// with ** (because of second argument to strol)
+//
+// When I add precedence, then I will learn about data structures
+// and algorithms for real because will probably want to store the
+// input in some sort of tree/graph/something. Sorted somehow.
+
+// TODO:
+//
+// 1. Allow spaces - skip them
+
+#include <stdio.h>
+#include <stdlib.h> // for EXIT_SUCCESS/EXIT_FAILURE
+#include <errno.h>  // for strtol()
+#include <limits.h> // for LONG_(MIN|MAX)
+#include <string.h> // for strlen()
+#include <ctype.h>  // for isdigit()
+
+#define and &&
+#define or  ||
+
+#define MAXBUF  1024
+#define DECIMAL 10
+
+enum operators {
+    NUL,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    MOD
+};
+
+// I don't know the right function to use for input, but using
+// "scanf("%s", input)" caused spaces to mess up the result, due to
+// buffering stuff and when scanf returns. So we'll use this.
+int
+read_stdin(char * s)
+{
+    char c = 0;
+    char*p = s;
+    int  i = 0;
+    
+    do
+    {
+        c = fgetc(stdin);
+        // Can't do *s++ because that's moving the memory address
+        // pointed to by the actual variable passed in, so when
+        // control passed back to the process, it's basically invalid
+        // (pointed after the string).
+        *p++ = c;
+        ++i;
+    } while (c != '\n');
+    s[i-1] = '\0'; // Remove the \n
+
+    return i;
+}
+
+long
+convert_to_num(const char *str)
+{
+    long res = 0;
+
+    res = strtol(str, NULL, DECIMAL);
+    if (res == LONG_MIN)
+    {
+        fprintf(stderr, "Could not convert %s to a number without underflowing.\n", str);
+        return LONG_MIN;
+    }
+    else if (res == LONG_MAX)
+    {
+        fprintf(stderr, "Could not convert %s to a number without overflowing.\n", str);
+        return LONG_MAX;
+    }
+    else if ((res = 0) and (errno == EINVAL))
+    {
+        fprintf(stderr, "Could not convert %s to a number.\n", str);
+        exit(EXIT_FAILURE);
+    }
+}
+
+int
+convert_long_to_str(long num, char * str)
+{
+    long t = -1;
+    char c = 0;
+    char
+        * ptr = NULL,
+        * tmp = NULL;
+
+    if (num == 0)
+    {
+        *str++ = '0';
+        *str   = '\0';
+    }
+    
+    tmp = malloc(MAXBUF);
+    memset(tmp, '\0', MAXBUF);
+
+    // This reverses the number
+    ptr = tmp;
+    while (num != 0)
+    {
+        t = num % 10;
+        c = t + '0';
+        *ptr++ = c;
+
+        num /= 10;
+    }
+
+    // So we reverse it back. Seems like a hack.
+    ptr = tmp+(strlen(tmp)-1);  // -1 for null terminator
+    for (size_t i = 0; i < strlen(tmp); ++i)
+    {
+        str[i] = *ptr--;
+    }
+    // This should be set due to memset above, but just to be sure
+    str[strlen(tmp)] = '\0';
+    
+    free(tmp);
+    return 0;
+}
+
+int
+is_operator(char test)
+{
+    int is_oper = 0;
+    
+    switch(test)
+    {
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+            is_oper = 1;
+            break;
+        default:
+            is_oper = 0;
+    }
+
+    return is_oper;
+}
+
+// Want to see if works for single digit numbers
+long
+calculate(char *lnum, enum operators oper, char *rnum)
+{
+    long left = 0,
+         right = 0;
+    long result = 0;
+
+    // Assuming valid input. :) This will happen elsewhere in final
+    // version. This function, if it remains, will receive actual numbers.
+    left  = atoi(lnum);
+    right = atoi(rnum);
+    switch (oper)
+    {
+        case ADD:
+            result = left + right;
+            break;
+        case SUB:
+            result = left - right;
+            break;
+        case MUL:
+            result = left * right;
+            break;
+        case DIV:
+            if (right == 0)
+            {
+                fprintf(stderr, "Attempt to divide by zero. Returning zero.\n");
+                result = 0;
+            }
+            else
+            {
+                result = left / right;
+            }
+            break;
+        case MOD:
+            result = left % right;
+            break;
+    }
+
+    return result;
+}
+
+
+int
+main(int argc, char **argv)
+{
+    char input[MAXBUF];
+    char *p = NULL;
+
+    int
+        need_to_calculate = 0,
+        have_operator = 0,
+        first_op = 1;
+
+    long
+        res = 0,
+        working_res = 0;
+    char
+        loperand = 0,
+        roperand = 0;
+    char
+        *left_num_str = NULL,
+        *left_char = NULL,
+        *right_num_str = NULL,
+        *right_char = NULL;
+
+    enum operators operator = NUL;
+    
+    
+    printf("Trey's Simple Calculator.\n");
+    printf("Basic maths - addition, subtraction, multiplcation, division, modulo.\n");
+    printf("Enter your equations, please. Empty line will exit.\n");
+    
+    read_stdin(input);
+    /* while ((fgets(input, sizeof(input), stdin)) == NULL) */
+    /*     ; */
+
+    left_num_str  = malloc(MAXBUF);
+    memset(left_num_str, '\0', MAXBUF);
+    left_char = left_num_str;
+
+    right_num_str = malloc(MAXBUF);
+    memset(right_num_str, '\0', MAXBUF);
+    right_char = right_num_str;
+    
+    p = input;
+    while (*p != '\0')
+    {
+        if (isspace(*p))
+        {
+            ++p;
+            continue;
+        }
+        
+        if (isdigit(*p) and !have_operator)
+        {
+            // This should only be true for first number
+            *left_char++ = *p++;
+        }
+        else if (isdigit(*p) and have_operator)
+        {
+            *right_char++ = *p++;
+            if ((*p == '\0') or (is_operator(*p))) // This is the next character
+            {
+                // This seems like a hack
+                need_to_calculate = 1;
+            }
+        }
+        else if (is_operator(*p))
+        {
+            // We may need to check the next value for a double-char operator
+            switch(*p++)
+            {
+                case '+':
+                    operator = ADD;
+                    break;
+                case '-':
+                    operator = SUB;
+                    break;
+                case '*':
+                    operator = MUL;
+                    break;
+                case '/':
+                    operator = DIV;
+                    break;
+                case '%':
+                    operator = MOD;
+                    break;
+                default:
+                    operator = NUL;
+                    break;
+            }
+            if (operator != NUL)
+            {
+                if (have_operator)
+                {
+                    // We have hit two operators with no calculation;
+                    // therefore, we have a multi-operator request and
+                    // we need to do it.
+                    need_to_calculate = 1;
+                }
+                else
+                {
+                    have_operator = 1;
+                    need_to_calculate = 0;
+                }
+            }
+            //            ++p;
+        }
+
+        if (need_to_calculate)
+        {
+            if (!first_op)
+            {
+                // Set left operand to working_res
+                convert_long_to_str(working_res, left_num_str);
+            }
+            else
+            {
+                first_op = 0;
+            }
+            working_res = calculate(left_num_str, operator, right_num_str);
+            have_operator = 0;
+            memset(left_num_str, '\0', MAXBUF);
+            memset(right_num_str, '\0', MAXBUF);
+        }            
+
+
+    }
+    
+    printf("%ld\n", working_res);
+    return 0;
+}

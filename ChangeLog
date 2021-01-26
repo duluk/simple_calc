@@ -1,0 +1,197 @@
+Mon Jan 18 02:32:29 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (left_associative): Made power (^) operator right-associative.
+
+Sun Jan 17 02:13:16 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (calculate): Added check for 0 denominator in modulo.
+
+Sun Jan 17 02:11:32 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: Remove error_stack. Unnecessary and unused.
+
+Sat Jan 16 02:34:13 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (main): Remove the global var_list variable.
+	Didn't really need to do it that way. Not sure my
+	static-in-the-loop method is great but.
+
+Sat Jan 16 02:17:44 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (assert_calc): Add variables to the test
+	functions. Tests (e.g., "(a*h+z)/a") are passing.
+
+Sat Jan 16 01:56:23 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (parse_infix): Added ability to recognize
+	variables and substitute the stored value when found. Variable
+	list is a very simple hash table/array. Index is the variable
+	itself, converted to a number.
+
+	* commands.c: Added following function:
+	int hash_var(char v):
+	this will convert a variable into a number/index (right now it's a
+	simple as obtaining the numeric code of the letter, where A=0.
+
+	Reworked the other new prototypes to match the new variable_list
+	data structure, which is a sort of hash table - that is, an array
+	where the index is the variable.
+
+	Variables working. Basically. Still needs more testing. And
+	finding memory leaks.
+
+Fri Jan 15 21:15:02 2021  Trey Bruce  <jab3@atdesk.com>
+
+	* commands.c: Added the following functions:
+	int validate_variable(const char * v):
+	Make sure the entered variable is a single letter.
+
+	int validate_value(const char * v):
+	Make sure the value is a number.
+
+	int lookup_var(char x, Variable **vars, stack_type *);
+	Lookup function for the list of variables. Barely a prototype at
+	this point.
+
+Fri Jan 15 21:10:51 2021  Trey Bruce  <jab3@atdesk.com>
+
+	* simple_calc.c (main): Made "Variable vars" an array, at least
+	for now. Need to think about the appropriate data structure for
+	it. What is the best? Array, list, hash? What about traversing it,
+	how do I know when I am at the end of the list?
+
+Fri Jan 15 21:10:02 2021  Trey Bruce  <jab3@atdesk.com>
+
+	* simple_calc.h: Added the following functions (to commands.c):
+	int validate_variable(const char * v);
+	int validate_value(const char * v);
+	int lookup_var(char x, Variable **vars, stack_type *);
+
+	Added MAX_VAR and set to 26. (#letters)
+
+
+Wed Jan 13 20:19:39 2021  Trey Bruce  <jab3@atdesk.com>
+
+	* commands.c: Separate file for handling the commands and variable
+	parsing/setting/handling, etc. Will eventually use hash table for
+	variables.
+
+Wed Jan 13 20:18:21 2021  Trey Bruce  <jab3@atdesk.com>
+
+	* simple_calc.c (main): Initial support for allowing commands and
+	variables. Check input for command first.
+	* simple_calc.h: Initial structures to support commands and
+	variables.
+
+Mon Jan 11 22:37:55 2021  Trey Bruce  <jab3@atdesk.com>
+
+	* simple_calc.c: Added 'last_result' static variable to hold the
+	result of last calculation. This way user can enter '*2' to use
+	the last result as the left operand.
+
+Mon Jan 11 16:55:27 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (parse_infix): If invalid character entered, set
+	ret_val to -1 and bail. This fixes the "3+#" issue.
+
+Mon Jan 11 16:32:37 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.h:
+	* simple_calc.c (make_expression): rename make_expression to
+	stack_to_str
+
+Mon Jan 11 16:13:45 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (assert_calc): Sprucing up output for tests
+
+Mon Jan 11 16:02:44 2021  Trey Bruce  <jab3@korazin.net>
+
+	* calc_stack.c (stack_initialize): Add memset
+
+Mon Jan 11 14:36:44 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.h: Change calc_t to double from long long. Hoping
+	this will at least give better precision for results.
+
+Mon Jan 11 14:04:31 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (parse_infix): Rework function to return an int
+	instead of the token_stack, for checking error result. So now it
+	is passed the stack variable into the function as token_stack **.
+	Caused some other rewrites in the code, but tests are now passing.
+	Basically passing pointers around everywhere now. Danger!
+	* simple_calc.h: Updated prototype of parse_infix.
+
+Mon Jan 11 13:11:44 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (parse_infix): Set return value to error_stack and
+	return that if there is an issue. (and there is a goto! Yay! LOVE
+	me some gotos :))
+
+Mon Jan 11 13:11:13 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.h: Added error_stack for return value of parse_infix
+
+Mon Jan 11 12:46:55 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c (parse_infix): Cleanup to use a variable where the
+	same calculation was used three times in four lines. (len = p - c)
+	Interesting note: "malloc(sizeof(p-c)+1)" works. "malloc(sizeof(len)+1)"
+	does not.
+
+Mon Jan 11 12:48:18 2021  Trey Bruce  <jab3@korazin.net>
+
+	* note: Everything before this line was done after the fact. The
+	times are made-up but do represent the time of night I mostly
+	spent working on this. The dates may be slightly off. (last week I
+	was able to sleep in so I could stay up late; Jack was in quarantine)
+
+Mon Jan 11 03:33:33 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: Reworked infix-to-postfix shunting-yard
+	algorithm, using detailed algorithm on Wikipedia. (yeah that's
+	right) Precedence and parenthesis working.
+	* simple_calc.h: Updates.
+
+Mon Jan 10 01:30:33 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: Removed my left-right evaluation for a
+	stack-based shunting-yard algorithm. Parenthesis not working
+	correctly. Precedence does.
+	* simple_calc.h: Updates for helper functions.
+
+Mon Jan 10 02:30:30 2021  Trey Bruce  <jab3@korazin.net>
+
+	* calc_stack.c: Renamed stack_top to stack_peek because I don't
+	like stack_top. Not big fan of stack_peek, but whatever.
+	* calc_stack.h: Update to match rename.
+
+Mon Jan 09 02:17:58 2021  Trey Bruce  <jab3@korazin.net>
+
+	* calc_stack.c: Implemented array-based stack data structured,
+	using Kruse's C++ Data Structures and Program Design. (fantasic
+	book; will start re-learning C++ with it soon)
+	* calc_stack.h: Header file.
+
+Mon Jan 08 02:21:44 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: Various fixes and tweaks. Still no precedence.
+	* simple_calc.h: Added declarations/definitions here. Basically I
+	got tired of the compiler warnings. And it's cleaner. I guess.
+
+Mon Jan 05 01:30:33 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: Moved some helper functions to mylib/mylib.[ch].
+
+Mon Jan 04 01:30:33 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: Added multi-digit capability. It still just
+	parses the expression from left to right, calculating as it goes -
+	so no precedence.
+
+Mon Jan 03 01:30:33 2021  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: First implementation. Super simple - doesn't even
+	handle multiple digits. (just processes one character at a time
+	with no "pointer walking" etc)
+
