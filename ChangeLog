@@ -1,3 +1,7 @@
+Sat Feb 27 11:27:26 2021  Trey Bruce  <jab3@korazin.net>
+
+	* commands.c: Cleaning up some comments
+
 Mon Jan 18 02:32:29 2021  Trey Bruce  <jab3@korazin.net>
 
 	* simple_calc.c (left_associative): Made power (^) operator right-associative.
