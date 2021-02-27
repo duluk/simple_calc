@@ -64,7 +64,7 @@ validate_value(const char * v)
     return 0;
 }
 
-// "hashish" function
+// "hash-ish" function
 int
 hash_var(char v)
 {
@@ -116,6 +116,7 @@ parse_let(char * input)
         
         // Variable
         f = strtok(NULL, " ");
+
         // I think this will go bad though. Particularly in my actual
         // program. This one may work because it is using the buf
         // variable below. May do something input, which I suppose
@@ -125,7 +126,7 @@ parse_let(char * input)
             return NULL;
         var->name = *f;
 
-        // This should be =
+        // This should be the equal sign
         f = strtok(NULL, " ");
         if ((r = strncmp("=", f, 1)) != 0)
             return NULL;
@@ -151,10 +152,10 @@ parse_command(char * input_str, Variable ** var, Commands cmd)
     {
         case LET:
         {
+            // parse_let malloc's the return value, given to let_v
             Variable * let_v = parse_let(input_str);
             if (let_v != NULL)
             {
-                // Pretty sure var_list should be **
                 /* var = memcpy(var, let_v, sizeof(Variable)); // or sizeof(let_v)? */
                 *var = let_v;
                 r = SUCCESS;
