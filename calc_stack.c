@@ -4,7 +4,7 @@
  * operators in the correct order, we just deque instead. What
  * would it look like? Need to have a pointer to the top of the stack
  * and the head of the queue, and both need to be maintained through
- * all operations.
+ * all operations...
  */
 
 #include <stdio.h>
