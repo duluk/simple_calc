@@ -331,8 +331,8 @@ left_associative(char op)
 {
     // I'm leaving this even though I don't handle any operators that
     // are right associative. Just return true.
-
-    // Well, turns out ^ (power) is right-associative. Who knew?
+    //   ...a few moments later...
+    // Well, turns out ^ is right-associative. Who knew?
     return (op != '^');
 }
 
@@ -417,8 +417,14 @@ parse_infix(const char * infix, token_stack ** postfix_stack, calc_t * var_list)
             enum STACK_ERRORS ret = STACK_FAIL;
             ret = stack_peek(&operators, &top_op);
 
-            // I really want to get this to look "right"
-            while (
+            // I really want to get this to look "right". Whoops.
+            // What's happening is this: while the operator at the top
+            // of the operators stack is higher or equal precedence
+            // (basically) than the operator currently in the input
+            // stream, but not a '(' - then we need to move the operator
+            // at the top of the operators stack onto the output/postfix
+            // stack to get the precedence right.
+	    while (
                    (ret == STACK_SUCCESS)
                 && ((precedence(*top_op) > precedence(*p))
                  || ((precedence(*top_op) == precedence(*p))
@@ -426,12 +432,6 @@ parse_infix(const char * infix, token_stack ** postfix_stack, calc_t * var_list)
                 && (*top_op != '(')
             )
             {
-                // What's happening is this: while the operator at the top
-                // of the operators stack is higher or equal precedence
-                // (basically) than the operator currently in the input
-                // stream, but not a '(' - then we need to move the operator
-                // at the top of the operators stack onto the output/postfix
-                // stack to get the precedence right.
                 stack_push(output, top_op);
                 stack_pop(&operators);
                 ret = stack_peek(&operators, &top_op);
@@ -598,8 +598,6 @@ postfix_evaluate(token_stack * input)
 
 void
 assert_calc(const char * expr, calc_t expected, calc_t * vars)
-    // The function pointer was cool when it was all one thing. That
-    // ain't happening now.
 {
     token_stack * r_st = NULL;
     char * postfix_str = NULL;
@@ -746,7 +744,7 @@ main(int argc, char **argv)
     }
     else // I don't like this. Maybe a nice goto with the args...
     {
-        printf("Trey's Simple Calculator. (c) 2021.\n");
+        printf("Duluk's Simple Calculator. (c) 2021.\n");
         printf("Basic maths - %s\n", supported_operations);
         printf("Enter your equations, please. Empty line will exit.\n");
     
