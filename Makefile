@@ -31,10 +31,6 @@ endif
 
 SRC_HOME = $(HOME_DIR)/OneDrive/Programming/mine
 
-MYLIB_HOME = $(SRC_HOME)/mylib
-MYLIB_OBJ = $(MYLIB_HOME)/mylib.o
-MYLIB_INC = -I$(MYLIB_HOME) -L$(MYLIB_HOME)
-
 MYLIB = -lmylib 
 READLINE = -lreadline
 MATH = -lm
@@ -62,7 +58,7 @@ all: $(SC_SHORT)
 #	$(CC) $(CFLAGS) $(C99) $(MYLIB_INC) -c -o $(SC).o $(SC).c $(STDLIBS)
 
 $(COMMANDS).o: $(COMMANDS).c $(SC).h
-	$(CC) $(CFLAGS) $(C99) $(DEBUG) $(MYLIB_INC) -c -o $(COMMANDS).o $(COMMANDS).c $(MYLIB)
+	$(CC) $(CFLAGS) $(C99) $(DEBUG) -c -o $(COMMANDS).o $(COMMANDS).c $(MYLIB)
 
 $(STACK).o: $(STACK).c $(STACK).h
 	$(CC) $(CFLAGS) $(C99) $(DEBUG) -c -o $(STACK).o $(STACK).c
@@ -74,10 +70,10 @@ infix_test: infix_to_postfix.c $(STACK).o
 	$(CC) $(CFLAGS) $(C99) $(DEBUG) -o infix_test infix_to_postfix.c $(STACK).o
 
 $(SC_SHORT): $(SC).c $(SC).h $(STACK).o $(COMMANDS).o
-	$(CC) $(CFLAGS) $(C99) $(DEBUG) $(MYLIB_INC) -o $(SC_SHORT) $(SC).c $(STACK).o $(COMMANDS).o $(STDLIBS) $(MATH)
+	$(CC) $(CFLAGS) $(C99) $(DEBUG) -o $(SC_SHORT) $(SC).c $(STACK).o $(COMMANDS).o $(STDLIBS) $(MATH)
 
 $(SC_FIRST_SHORT): $(SC_FIRST)
-	$(CC) $(CFLAGS) $(C99) $(DEBUG) $(MYLIB_INC) -o $(SC_FIRST_SHORT) $(SC_FIRST) $(STDLIBS) $(MATH)
+#	$(CC) $(CFLAGS) $(C99) $(DEBUG) -o $(SC_FIRST_SHORT) $(SC_FIRST) $(STDLIBS) $(MATH)
 
 clean:
 	$(RM) -f a.out $(SC_SHORT) $(SC).o $(SC_FIRST_SHORT) $(STACK_TEST) $(STACK).o $(COMMANDS).o $(BACK) core*

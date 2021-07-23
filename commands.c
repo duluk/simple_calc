@@ -3,7 +3,7 @@
 #include <string.h>  // For strlen, strcmp, substr, etc
 #include <ctype.h>   // for isalpha/isdigit, toupper
 
-#include "mylib.h"
+#include <mylib.h>
 #include "simple_calc.h"
 
 // Sort of weird 'efficiency' strategy is to not walk through the

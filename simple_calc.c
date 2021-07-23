@@ -76,7 +76,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#include "mylib.h"
+#include <mylib.h>
 #include "simple_calc.h"
 
 // Keep it secret, keep it safe
