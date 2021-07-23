@@ -704,10 +704,12 @@ run_tests(void)
     assert_calc("(a*h+z)/a", 200, vars);
 
     // malformed expressions with parenthesis
+    printf("\nThe following two tests should fail with mismatched parens.\n");
     assert_calc("12*2+3)", 60, vars);
     assert_calc("12*(2+3", 60, vars);
 
     // test assert_calc for failed test
+    printf("\nThe following test should fail. Testing assert_calc function.\n");
     assert_calc("12*(2+3)", 0, vars);
 }
 
