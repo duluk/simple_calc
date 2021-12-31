@@ -78,14 +78,7 @@ stack_top(token_stack *st, stack_type ** elem)
 int
 stack_peek(token_stack *st, stack_type ** elem)
 {
-    if (st->stack_count != 0)
-    {
-        *elem = st->elements[st->stack_count-1];
-    }
-    else
-        return STACK_FAIL;
-
-    return STACK_SUCCESS;
+    return stack_top(st, elem);
 }
 
 token_stack *
