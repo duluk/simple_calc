@@ -1,3 +1,11 @@
+Thu Sep 26 23:17:39 2024  Trey Bruce  <jab3@korazin.net>
+
+	* simple_calc.c: Use cast to clarify intention
+	* calc_stack.c:
+	* commands.c:
+
+	Clean up some whitespace stuff on these
+
 Sat Feb 27 11:27:26 2021  Trey Bruce  <jab3@korazin.net>
 
 	* commands.c: Cleaning up some comments

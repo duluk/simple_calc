@@ -15,7 +15,7 @@ Commands
 command_found(char * cmd)
 {
     Commands ret = NONE;
-    
+
     // Read comment for function to know why switching on the first letter
     // of the command and not using something like GNU's strcasestr.
     switch(*cmd)
@@ -85,7 +85,7 @@ lookup_var(char x, calc_t * vars, calc_t * n)
     // This isn't a calc_t** because I'm not assigning to the n variable;
     // I'm assigning to what n points to. That works.
     *n = vars[hash_var(x)];
-    
+
     return 0;
 }
 
@@ -102,7 +102,7 @@ parse_let(char * input)
     /* s = malloc(strlen(input) * sizeof(char)); */
     /* strncpy(s, input, strlen(input)); */
     s = input;
-    
+
     // We can throw this away; already have the cmd
     f = strtok(s, " ");
     if ((r = strncmp("let", f, 3)) != 0)
@@ -113,7 +113,7 @@ parse_let(char * input)
     if (f)
     {
         var = malloc(sizeof(Variable));
-        
+
         // Variable
         f = strtok(NULL, " ");
 

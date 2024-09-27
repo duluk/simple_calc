@@ -89,7 +89,7 @@ int
 is_operator(char test)
 {
     int is_oper = 0;
-    
+
     switch(test)
     {
         case '+':
@@ -97,7 +97,7 @@ is_operator(char test)
         case '*':
         case '/':
         case '%':
-	case '^':
+        case '^':
             is_oper = 1;
             break;
         default:
@@ -111,7 +111,7 @@ void
 display_expression(char *op1, enum operators oper, char *op2)
 {
     char op = operator_to_str(oper);
-    
+
     printf("Calculating: %s %c %s\n", op1, op, op2);
 }
 
@@ -179,9 +179,9 @@ calculate(char *lnum, enum operators oper, char *rnum)
                 result = (int)left % (int)right;
             }
             break;
-	case POW:
-	    result = pow(left, right);
-	    break;
+        case POW:
+            result = pow(left, right);
+            break;
         case NUL:
             // I'm tired of the compiler warning...
             break;
@@ -194,7 +194,7 @@ enum operators
 get_operator(char op)
 {
     enum operators operator = NUL;
-    
+
     switch(op)
     {
         case '+':
@@ -228,7 +228,7 @@ char
 operator_to_str(enum operators op)
 {
     char op_c = ' ';
-    
+
     switch(op)
     {
         case ADD:
@@ -283,7 +283,7 @@ precedence(char op)
 
     return prec;
 }
-            
+
 // This reverses it before printing it. Also adds space between
 // tokens. (the whole reversing thing is messed up...not sure how
 // my use of stacks are wrong though; is it normal to reverse it prior
@@ -297,9 +297,9 @@ stack_to_str(token_stack input)
     token_stack * ordered = NULL;
 
     memset(expr, '\0', MAXBUF);
-    
+
     ordered = stack_reverse(&input);
-    
+
     while (!stack_empty(ordered))
     {
         if ((stack_peek(ordered, &item)) != STACK_FAIL)
@@ -342,7 +342,7 @@ parse_infix(const char * infix, token_stack ** postfix_stack, calc_t * var_list)
 {
     int
         ret_val = 0;
-    
+
     stack_type
         * top_op = NULL,
         * c      = NULL,
@@ -360,8 +360,8 @@ parse_infix(const char * infix, token_stack ** postfix_stack, calc_t * var_list)
         fprintf(stderr, "Something extremely weird happened. Aborting.\n");
         exit(EXIT_FAILURE);
     }
-    
-    p = infix;
+
+    p = (char *)infix;
     while (*p != '\0')
     {
         if (isspace(*p))
@@ -408,7 +408,7 @@ parse_infix(const char * infix, token_stack ** postfix_stack, calc_t * var_list)
                 convert_long_to_str(n, num);
                 stack_push(output, num);
             }
-	    ++p;
+            ++p;
         }
         else if (is_operator(*p))
         {
@@ -424,7 +424,7 @@ parse_infix(const char * infix, token_stack ** postfix_stack, calc_t * var_list)
             // stream, but not a '(' - then we need to move the operator
             // at the top of the operators stack onto the output/postfix
             // stack to get the precedence right.
-	    while (
+            while (
                    (ret == STACK_SUCCESS)
                 && ((precedence(*top_op) > precedence(*p))
                  || ((precedence(*top_op) == precedence(*p))
@@ -535,16 +535,16 @@ postfix_evaluate(token_stack * input)
         * operand2   = NULL;
 
     calc_t result = 0.0L;
-    
+
     enum operators operator = NUL;
 
     stack_initialize(&operands);
-    
+
     // The stack as-made is actually reversed for processing, so we
     // will reverse it. I don't know if that's my algorithmic problem
     // or if that's normal. This essentially converts it to a queue.
     eval_ordered_stack = stack_reverse(input);
-    
+
     char * token = NULL;
     while (!stack_empty(eval_ordered_stack))
     {
@@ -576,7 +576,7 @@ postfix_evaluate(token_stack * input)
             // cleared in main.
             /* free(operand1); */
             /* free(operand2); */
-            
+
             // Valgrind says this is a leak. I don't know how/where to free
             // them though. If I do it above, then valgrind says I'm illegally
             // freeing. (though app doesn't crash ... undefined?)
@@ -624,7 +624,7 @@ assert_calc(const char * expr, calc_t expected, calc_t * vars)
         // postfix_str allocated by stack_to_str
         free(postfix_str);
     }
-    
+
     // r_st allocated in parse_infix
     free(r_st);
 }
@@ -739,17 +739,17 @@ main(int argc, char **argv)
                     break;
             }
         }
-	else
-	{
+        else
+        {
             puts(usage);
-	}
+        }
     }
     else // I don't like this. Maybe a nice goto with the args...
     {
         printf("Duluk's Simple Calculator. (c) 2021.\n");
         printf("Basic maths - %s\n", supported_operations);
         printf("Enter your equations, please. Empty line will exit.\n");
-    
+
         for ( ; ; )
         {
             // Keep it around for each call (0-init only on first iteration)

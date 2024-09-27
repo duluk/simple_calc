@@ -15,13 +15,13 @@ main(int argc, char **argv)
     char input[MAX_BUF];
     char * input_copy = NULL;
     token_stack s;
-    
+
     if ((stack_initialize(&s)) != 0)
     {
         fprintf(stderr, "Something extremely weird happened. Aborting.\n");
         exit(EXIT_FAILURE);
     }
-    
+
     for (int i = 0; i < TEST_SIZE; ++i)
     {
         printf("Expression %d: ", i+1);
@@ -39,7 +39,7 @@ main(int argc, char **argv)
     }
 
     printf("stack_size = %ld\n", stack_size(&s));
-    
+
     stack_type * item;
     while (!stack_empty(&s))
     {
