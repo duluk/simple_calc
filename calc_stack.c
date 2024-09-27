@@ -17,7 +17,7 @@ int
 stack_initialize(token_stack *st)
 {
     /* st = (token_stack) 0; */
-    
+
     memset(st, 0, sizeof *st);
     st->stack_count = 0;
     st->max_size_life = 0;
@@ -94,8 +94,8 @@ stack_reverse(token_stack *st)
     while (i > 0)
     {
         // i will point to element insertion point, so decremement first.
-	// j is pointing to first element (0) at beginning, so decrement
-	// after.
+        // j is pointing to first element (0) at beginning, so decrement
+        // after.
         reversed->elements[j++] = st->elements[--i];
     }
     reversed->stack_count = st->stack_count;
@@ -116,7 +116,7 @@ stack_clear(token_stack *st)
             free(st->elements[i]);
 
     st->stack_count = 0;
-    
+
     return STACK_SUCCESS;
 }
 
@@ -131,7 +131,7 @@ stack_full(token_stack *st)
 {
     return (st->stack_count == MAX_STACK_SIZE);
 }
-        
+
 size_t
 stack_size(token_stack *st)
 {
