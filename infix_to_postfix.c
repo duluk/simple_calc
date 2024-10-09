@@ -250,7 +250,7 @@ test_input(const char * input)
 
     stack_clear(&output);
 }
-        
+
 int
 main(void)
 {
