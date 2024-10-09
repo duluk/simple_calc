@@ -49,6 +49,7 @@ int  precedence(char op);
 int  parse_infix(const char * input, token_stack ** postfix_stack, calc_t * var_list);
 char * stack_to_str(token_stack input);
 void display_expression(char *op1, enum operators oper, char *op2);
+calc_t factorial(calc_t n);
 calc_t calculate(char *lnum, enum operators oper, char *rnum);
 calc_t simple_evaluate(const char * expression);
 calc_t postfix_evaluate(token_stack * input);

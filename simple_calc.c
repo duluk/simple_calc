@@ -117,6 +117,15 @@ display_expression(char *op1, enum operators oper, char *op2)
 }
 
 calc_t
+factorial(calc_t n)
+{
+    if (n == 0)
+        return 1;
+    else
+        return n * factorial(n-1);
+}
+
+calc_t
 calculate(char *lnum, enum operators oper, char *rnum)
 {
     calc_t
@@ -187,12 +196,16 @@ calculate(char *lnum, enum operators oper, char *rnum)
             }
             break;
         case FAC:
-          // Factorial is a unary operator, so right operand would be ignored,
-          // except in postfix notation the operand will be 'right'
-          result = 1;
-          for (int i = 1; i <= right; i++)
-            result *= i;
-          break;
+            // Factorial is a unary operator, so right operand would be ignored,
+            // except in postfix notation the operand will be 'right'.
+
+            // I have a feeling the loop is fater but wanted to try the recursive
+            // function to make sure I knew hwo to do it.
+            // result = 1;
+            // for (int i = 1; i <= right; i++)
+            //   result *= i;
+            result = factorial(right);
+            break;
         case POW:
             result = pow(left, right);
             break;
