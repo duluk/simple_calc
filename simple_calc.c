@@ -83,7 +83,7 @@
 static calc_t last_result = 0L;
 
 const char supported_operations[] =
-    "addition, subtraction, multiplication, division, modulus, power";
+    "addition, subtraction, multiplication, division, modulus, factorial, power";
 
 int
 is_operator(char test)
@@ -97,6 +97,7 @@ is_operator(char test)
         case '*':
         case '/':
         case '%':
+        case '!':
         case '^':
             is_oper = 1;
             break;
@@ -126,12 +127,18 @@ calculate(char *lnum, enum operators oper, char *rnum)
     // This may be assuming too much. If lnum is NULL, then it may be
     // that something like "*2" was entered, to use the last result
     // for the left operand (basically). But we're sort of assuming that.
+    // printf("Operator: %i %c\n", oper, operator_to_str(oper));
+    // printf("Calculating: %s %c %s\n", lnum, operator_to_str(oper), rnum);
     if ((lnum == NULL) && last_result)
         left = last_result;
     else if (lnum != NULL)
-        left  = atoi(lnum);
-    else
+        left = atoi(lnum);
+    else if (oper != FAC)
     {
+        // Factorial is a unary operator, so right operand would be ignored,
+        // except in postfix notation the operand will be 'right', thus for
+        // factorial the left operand will be NULL. That _should_ be the only
+        // options at this point: NULL or FAC operator
         printf("Error with left operand in calculate.\n");
         return -1;
     }
@@ -179,6 +186,13 @@ calculate(char *lnum, enum operators oper, char *rnum)
                 result = (int)left % (int)right;
             }
             break;
+        case FAC:
+          // Factorial is a unary operator, so right operand would be ignored,
+          // except in postfix notation the operand will be 'right'
+          result = 1;
+          for (int i = 1; i <= right; i++)
+            result *= i;
+          break;
         case POW:
             result = pow(left, right);
             break;
@@ -211,6 +225,9 @@ get_operator(char op)
             break;
         case '%':
             operator = MOD;
+            break;
+        case '!':
+            operator = FAC;
             break;
         case '^':
             operator = POW;
@@ -246,6 +263,9 @@ operator_to_str(enum operators op)
         case MOD:
             op_c = '%';
             break;
+        case FAC:
+            op_c = '!';
+            break;
         case POW:
             op_c = '^';
             break;
@@ -270,6 +290,7 @@ precedence(char op)
         case '*':
         case '/':
         case '%':
+        case '!':
             prec = 4;
             break;
         case '+':
@@ -508,6 +529,7 @@ parse_infix(const char * infix, token_stack ** postfix_stack, calc_t * var_list)
     }
 
     *postfix_stack = output;
+    // printf("Postfix: %s\n", stack_to_str(*output));
   broke:
     stack_clear(&operators);
     return ret_val;
@@ -664,6 +686,12 @@ run_tests(void)
     assert_calc("100%1004", 100, vars);
     assert_calc("1000%1000", 0, vars);
 
+    // factorial
+    assert_calc("0!", 1, vars);
+    assert_calc("1!", 1, vars);
+    assert_calc("2!", 2, vars);
+    assert_calc("12!", 479001600, vars);
+
     // same operator mult. times, which caused problems with one of my
     // parsing implementations.
     assert_calc("9*9*9", 729, vars);
@@ -748,7 +776,7 @@ main(int argc, char **argv)
     {
         printf("Duluk's Simple Calculator. (c) 2021.\n");
         printf("Basic maths - %s\n", supported_operations);
-        printf("Enter your equations, please. Empty line will exit.\n");
+        printf("Enter your expressions, please. Empty line will exit.\n");
 
         for ( ; ; )
         {

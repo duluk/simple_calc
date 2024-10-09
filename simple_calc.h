@@ -37,6 +37,7 @@ enum operators
     MUL,
     DIV,
     MOD,
+    FAC,
     POW
 };
 
